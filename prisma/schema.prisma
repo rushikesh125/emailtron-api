@@ -12,13 +12,91 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-   id Int @id @default(autoincrement())
-   email String  @unique  @db.VarChar(255)
-   password String @db.VarChar(255)
-   createdAt DateTime @default(now()) @map("created_at")
-   updatedAt DateTime @updatedAt @map("updated_at")
-  @@map("users")
+  userId    String   @id
+  fullName  String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  photoURL  String   @default("/profile.png")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([createdAt])
+  @@map("users")
+
+  // Relations
+  emails      Email[]
+}
+
+model Email {
+  id         String   @id @default(uuid())
+  sender     String   @db.VarChar(255)
+  subject    String   @db.VarChar(255)
+  body       String   @db.Text
+  receivedAt DateTime @map("received_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  userId    String
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  meta      EmailMeta?
+  responses AIResponse[]
+
+  @@index([userId])
+  @@index([receivedAt])
+  @@index([sender]) // Index on sender for filtering/searching
+  @@map("emails")
+}
+
+model EmailMeta {
+  id        String   @id @default(uuid())
+  sentiment String   @db.VarChar(50)
+  emotionalScore Float?
+  emotionalIndicators String[]
+  sentimentAssessment String?
+
+  priority  String   @db.VarChar(50)
+  urgencyIndicators String[]
+  priorityAssessment String?
+
+  keywords  String[]
+  contacts  String[]
+  customerRequirements String[]
+  productMentions String[]
+  issueSummary String?
+
+  category  String?   @db.VarChar(100)
+  processingPriority Int?
+  overallSummary String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  emailId   String   @unique
+  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+
+  @@index([emailId])
+  @@index([category])           // Index for filtering and sorting
+  @@index([processingPriority]) // Index for filtering and sorting
+  @@map("email_meta")
+}
+
+model AIResponse {
+  id           String   @id @default(uuid())
+  draft        String   @db.Text
+  tone         String?  @db.Text        // <-- changed from VarChar(100)
+  keyReferences String[]
+  status       String   @default("pending") @db.VarChar(50)
+  isReady      Boolean  @default(false)
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  emailId      String
+  email        Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+
+  @@index([emailId])
+  @@map("ai_responses")
 }
