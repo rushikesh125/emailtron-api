@@ -188,7 +188,7 @@ app.post('/myemail/:emailId',getProcessedMailData)
 // app.listen(PORT, () => {
 //   console.log(`🚀 Server started on PORT: ${PORT}`);
 // });
-// export default serverless(app);
+export default serverless(app);
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
