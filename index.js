@@ -8,7 +8,7 @@ import { parse as csvParse } from 'csv-parse';
 import { parse as chronoParse } from 'chrono-node';
 import cors from 'cors';
 import aiAnalysisRouter from './routes/aiAnalysis.js';
-import { processEmails } from './controllers/emailProcessController.js';
+import { getProcessedMailData, getUnprocessedEmails, processEmails } from './controllers/emailProcessController.js';
 import { mailRouter } from './routes/mailRoute.js';
 import { dataForDashboardController, getEmailsWithFilters } from './controllers/mailController.js';
 
@@ -179,6 +179,8 @@ app.post('/process-emails', async (req, res) => {
 });
 app.post("/emails",getEmailsWithFilters)
 app.post("/dashboard",dataForDashboardController)
+app.post('/unprocessedmails',getUnprocessedEmails)
+app.post('/myemail/:emailId',getProcessedMailData)
 
 
 
