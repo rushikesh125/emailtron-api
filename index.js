@@ -7,6 +7,7 @@ import { PassThrough } from 'stream';
 import { parse as csvParse } from 'csv-parse';
 import { parse as chronoParse } from 'chrono-node';
 import cors from 'cors';
+import serverless from "serverless-http";
 import aiAnalysisRouter from './routes/aiAnalysis.js';
 import { getProcessedMailData, getUnprocessedEmails, processEmails } from './controllers/emailProcessController.js';
 import { mailRouter } from './routes/mailRoute.js';
@@ -184,10 +185,10 @@ app.post('/myemail/:emailId',getProcessedMailData)
 
 
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server started on PORT: ${PORT}`);
-});
-
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server started on PORT: ${PORT}`);
+// });
+export default serverless(app);
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
