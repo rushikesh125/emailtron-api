@@ -15,7 +15,7 @@ import { dataForDashboardController, getEmailsWithFilters } from './controllers/
 
 export const prisma = new PrismaClient();
 
-dotenv.config();
+dotenv.config({ path: '.env' });
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -188,7 +188,7 @@ app.post('/myemail/:emailId',getProcessedMailData)
 // app.listen(PORT, () => {
 //   console.log(`🚀 Server started on PORT: ${PORT}`);
 // });
-export default serverless(app);
+// export default serverless(app);
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
